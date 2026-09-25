@@ -1,56 +1,57 @@
 
 ▶ Place de la République, Paris -> Place de la République, Paris 2.36396,48.86754
-  OSM : 4276 espaces verts, 540 plans d'eau, 53 parcours balisés (27 ms)
-   5 km : 6 candidats, 12 appels, 6.1 s | meilleure 5.04 km (0.8 %), score 25.4, recouvrement 0 %, D+ 50 m
-       20 % au bord de l'eau (Bassin des Récollets) · 28 % sur des parcours balisés (Chemin de Trèves, Claye-Souilly - Igny) · 95 % sur chemins/voies piétonnes
-  10 km : 6 candidats, 13 appels, 13.9 s | meilleure 10.24 km (2.4 %), score 26.5, recouvrement 0 %, D+ 46 m
-       20 % au bord de l'eau (La Seine) · 12 % sur des parcours balisés (Traversée de Paris n°1) · 94 % sur chemins/voies piétonnes
-  21 km : 6 candidats, 10 appels, 11.3 s | meilleure 20.72 km (-1.3 %), score 24.1, recouvrement 0 %, D+ 107 m
-       13 % au bord de l'eau (Bassin de l'Arsenal) · 96 % sur chemins/voies piétonnes
+  Contexte (tuiles) : 581 espaces verts, 474 plans d'eau, 0 parcours balisés (23 ms)
+   5 km : 6 candidats, 12 appels, 6.1 s | meilleure 4.84 km (-3.2 %), score 27.2, recouvrement 0 %, D+ 17 m
+       25 % au bord de l'eau · 94 % sur chemins/voies piétonnes
+  10 km : 6 candidats, 12 appels, 12.8 s | meilleure 10.40 km (4.0 %), score 35.2, recouvrement 0 %, D+ 56 m
+       18 % en parc/bois · 22 % au bord de l'eau (La Seine) · 98 % sur chemins/voies piétonnes
+  21 km : 6 candidats, 13 appels, 13.7 s | meilleure 20.18 km (-3.9 %), score 31.7, recouvrement 0 %, D+ 132 m
+       15 % en parc/bois · 24 % au bord de l'eau (La Seine) · 94 % sur chemins/voies piétonnes
 
 ▶ Pont de Bir-Hakeim, Paris -> Pont de Bir-Hakeim, Paris 2.28755,48.85573
-  OSM : 5278 espaces verts, 608 plans d'eau, 48 parcours balisés (33 ms)
-   5 km : 6 candidats, 12 appels, 9.7 s | meilleure 4.80 km (-4.0 %), score 31.3, recouvrement 0 %, D+ 40 m
-       30 % en parc/bois (Champ de Mars, Jardins du Trocadéro) · 32 % au bord de l'eau (La Seine) · 17 % sur des parcours balisés (Traversée de Paris n°1) · 84 % sur chemins/voies piétonnes
-  10 km : 6 candidats, 9 appels, 9.7 s | meilleure 10.38 km (3.8 %), score 36.9, recouvrement 0 %, D+ 75 m
-       45 % en parc/bois (Bois de Boulogne, Parc de Passy) · 31 % au bord de l'eau (Lac Inférieur) · 20 % sur des parcours balisés (Sentier neuf) · 85 % sur chemins/voies piétonnes
-  21 km : 6 candidats, 9 appels, 9.2 s | meilleure 21.26 km (1.2 %), score 23.4, recouvrement 2 %, D+ 111 m
-       25 % en parc/bois (Bois de Boulogne, Parc de Passy) · 26 % au bord de l'eau (La Seine) · 23 % sur des parcours balisés (Les Portes de Paris) · 65 % sur chemins/voies piétonnes
+  Contexte (tuiles) : 556 espaces verts, 521 plans d'eau, 0 parcours balisés (33 ms)
+   5 km : 6 candidats, 10 appels, 8.4 s | meilleure 4.94 km (-1.2 %), score 37.8, recouvrement 0 %, D+ 49 m
+       29 % en parc/bois · 24 % au bord de l'eau (La Seine) · 90 % sur chemins/voies piétonnes
+  10 km : 6 candidats, 11 appels, 11.2 s | meilleure 10.14 km (1.4 %), score 49.2, recouvrement 1 %, D+ 62 m
+       49 % en parc/bois · 33 % au bord de l'eau (La Seine) · 89 % sur chemins/voies piétonnes
+  21 km : 6 candidats, 14 appels, 16.7 s | meilleure 21.38 km (1.8 %), score 29.3, recouvrement 0 %, D+ 85 m
+       11 % en parc/bois · 19 % au bord de l'eau (La Seine) · 95 % sur chemins/voies piétonnes
 
 ▶ Porte Dorée, Paris -> Porte Dorée, Paris 2.40618,48.83528
-  OSM : 3942 espaces verts, 497 plans d'eau, 53 parcours balisés (27 ms)
-   5 km : 6 candidats, 14 appels, 13.1 s | meilleure 4.78 km (-4.4 %), score 39, recouvrement 0 %, D+ 12 m
-       57 % en parc/bois (Pelouse de Reuilly) · 19 % au bord de l'eau (Lac Daumesnil) · 31 % sur des parcours balisés (Bois de Vincennes) · 85 % sur chemins/voies piétonnes
-  10 km : 6 candidats, 11 appels, 11.1 s | meilleure 9.84 km (-1.6 %), score 43.3, recouvrement 1 %, D+ 17 m
-       71 % en parc/bois (Enclos N°189) · 19 % au bord de l'eau (Lac Daumesnil) · 22 % sur des parcours balisés (Bois de Vincennes) · 90 % sur chemins/voies piétonnes
-  21 km : 6 candidats, 12 appels, 13.1 s | meilleure 21.88 km (4.2 %), score 23.1, recouvrement 8 %, D+ 60 m
-       31 % en parc/bois (Pelouse de Reuilly, Square Charles Fourier) · 45 % au bord de l'eau (La Seine) · 20 % sur des parcours balisés (Bois de Vincennes) · 65 % sur chemins/voies piétonnes
+  Contexte (tuiles) : 553 espaces verts, 507 plans d'eau, 0 parcours balisés (20 ms)
+   5 km : 6 candidats, 10 appels, 7.1 s | meilleure 5.20 km (4.0 %), score 39.2, recouvrement 1 %, D+ 16 m
+       56 % en parc/bois · 11 % au bord de l'eau (Ruisseau de Gravelle) · 75 % sur chemins/voies piétonnes
+  10 km : 6 candidats, 12 appels, 12.0 s | meilleure 10.16 km (1.6 %), score 54, recouvrement 6 %, D+ 17 m
+       78 % en parc/bois · 20 % au bord de l'eau (Ruisseau de Gravelle) · 91 % sur chemins/voies piétonnes
+  21 km : 6 candidats, 15 appels, 15.6 s | meilleure 20.76 km (-1.1 %), score 31, recouvrement 3 %, D+ 47 m
+       39 % en parc/bois · 32 % au bord de l'eau (La Seine) · 76 % sur chemins/voies piétonnes · ⚠ 20 % le long de grands axes
 
 ▶ Grand-Place, Bruxelles -> Grand-Place - Grote Markt, Bruxelles - Brussel 4.35241,50.84673
-  OSM : 3754 espaces verts, 762 plans d'eau, 56 parcours balisés (35 ms)
-   5 km : 6 candidats, 10 appels, 8.9 s | meilleure 4.84 km (-3.2 %), score 28, recouvrement 0 %, D+ 39 m
-       29 % au bord de l'eau · 17 % sur des parcours balisés (GR 12 Vlaanderen, Bergen op Zoom - Bruxelles) · 96 % sur chemins/voies piétonnes
-  10 km : 6 candidats, 12 appels, 12.2 s | meilleure 9.62 km (-3.8 %), score 23.8, recouvrement 0 %, D+ 51 m
-       15 % au bord de l'eau · 89 % sur chemins/voies piétonnes
-  21 km : 6 candidats, 10 appels, 10.3 s | meilleure 20.54 km (-2.2 %), score 22.7, recouvrement 0 %, D+ 134 m
-       13 % au bord de l'eau (Étangs d'Ixelles - Vijvers van Elsene) · 25 % sur des parcours balisés (GR 121 De Liège à Bruxelles) · 82 % sur chemins/voies piétonnes
+  Contexte (tuiles) : 1647 espaces verts, 1030 plans d'eau, 0 parcours balisés (30 ms)
+   5 km : 6 candidats, 10 appels, 9.3 s | meilleure 5.24 km (4.8 %), score 22.9, recouvrement 2 %, D+ 8 m
+       24 % au bord de l'eau (Canal maritime de Bruxelles à l'Escaut) · 92 % sur chemins/voies piétonnes
+  10 km : 6 candidats, 12 appels, 12.0 s | meilleure 10.32 km (3.2 %), score 25.1, recouvrement 0 %, D+ 69 m
+       21 % au bord de l'eau · 69 % sur chemins/voies piétonnes
+  21 km : 6 candidats, 12 appels, 12.7 s | meilleure 20.28 km (-3.4 %), score 30.6, recouvrement 5 %, D+ 133 m
+       22 % en parc/bois · 19 % au bord de l'eau (Josaphat) · 90 % sur chemins/voies piétonnes
 
 ▶ Parc du Cinquantenaire, Bruxelles -> Parc du Cinquantenaire - Jubelpark, Bruxelles - Brussel 4.39349,50.84104
-  OSM : 3306 espaces verts, 697 plans d'eau, 22 parcours balisés (34 ms)
-   5 km : 6 candidats, 11 appels, 10.4 s | meilleure 4.82 km (-3.6 %), score 31.7, recouvrement 2 %, D+ 43 m
-       39 % en parc/bois (Parc du Cinquantenaire - Jubelpark, Parc Léopold - Leopoldpark) · 18 % au bord de l'eau · 92 % sur chemins/voies piétonnes
-  10 km : 6 candidats, 10 appels, 10.0 s | meilleure 10.14 km (1.4 %), score 26.6, recouvrement 0 %, D+ 74 m
-       17 % en parc/bois (Parc du Cinquantenaire - Jubelpark, Jardins de l'Abbaye de la Cambre - Tuinen van de Ter Kamerenabdij) · 15 % au bord de l'eau (Étangs d'Ixelles - Vijvers van Elsene) · 17 % sur des parcours balisés (GR 121 De Liège à la Côte d'Opale Parcours principal (ongoing correction)) · 88 % sur chemins/voies piétonnes
-  21 km : 6 candidats, 11 appels, 11.4 s | meilleure 21.44 km (2.1 %), score 27.2, recouvrement 3 %, D+ 200 m
-       43 % en parc/bois (Forêt de Soignes - Zoniënwoud, Bois de la Cambre - Ter Kamerenbos) · 18 % au bord de l'eau (Trois Fontaines - Dry Borren) · 72 % sur chemins/voies piétonnes
+  Contexte (tuiles) : 1410 espaces verts, 1021 plans d'eau, 0 parcours balisés (25 ms)
+   5 km : 6 candidats, 11 appels, 10.2 s | meilleure 4.86 km (-2.8 %), score 37.9, recouvrement 3 %, D+ 47 m
+       38 % en parc/bois · 14 % au bord de l'eau · 92 % sur chemins/voies piétonnes
+  10 km : 6 candidats, 12 appels, 12.2 s | meilleure 9.56 km (-4.4 %), score 27.7, recouvrement 0 %, D+ 70 m
+       16 % en parc/bois · 16 % au bord de l'eau (Maelbeek) · 89 % sur chemins/voies piétonnes
+  21 km : 6 candidats, 10 appels, 10.8 s | meilleure 20.38 km (-3.0 %), score 37.9, recouvrement 4 %, D+ 178 m
+       34 % en parc/bois · 30 % au bord de l'eau (Woluwe) · 83 % sur chemins/voies piétonnes
 
 ▶ Bois de la Cambre, Bruxelles -> Bois de la Cambre - Ter Kamerenbos, Bruxelles - Brussel 4.37806,50.80659
-  OSM : 2845 espaces verts, 706 plans d'eau, 27 parcours balisés (27 ms)
-   5 km : 6 candidats, 11 appels, 10.6 s | meilleure 4.86 km (-2.8 %), score 30.3, recouvrement 0 %, D+ 45 m
-       41 % en parc/bois (Bois de la Cambre - Ter Kamerenbos) · 17 % sur des parcours balisés (GR 121 De Liège à Bruxelles) · 82 % sur chemins/voies piétonnes
-  10 km : 6 candidats, 14 appels, 14.0 s | meilleure 9.90 km (-1.0 %), score 25.4, recouvrement 6 %, D+ 89 m
-       38 % en parc/bois (Bois de la Cambre - Ter Kamerenbos, Forêt de Soignes - Zoniënwoud) · 87 % sur chemins/voies piétonnes
-  21 km : 6 candidats, 9 appels, 9.0 s | meilleure 21.22 km (1.0 %), score 41.5, recouvrement 0 %, D+ 196 m
-       61 % en parc/bois (Forêt de Soignes - Zoniënwoud, Bois de la Cambre - Ter Kamerenbos) · 36 % au bord de l'eau (Rood Kloosterbeek) · 89 % sur chemins/voies piétonnes
+  Contexte (tuiles) : 921 espaces verts, 616 plans d'eau, 0 parcours balisés (21 ms)
+   5 km : 6 candidats, 9 appels, 8.0 s | meilleure 4.76 km (-4.8 %), score 31.8, recouvrement 0 %, D+ 35 m
+       45 % en parc/bois · 72 % sur chemins/voies piétonnes
+  10 km : 6 candidats, 14 appels, 14.0 s | meilleure 9.56 km (-4.4 %), score 35, recouvrement 0 %, D+ 76 m
+       34 % en parc/bois · 87 % sur chemins/voies piétonnes
+  21 km : 6 candidats, 13 appels, 13.0 s | meilleure 20.74 km (-1.2 %), score 50.7, recouvrement 1 %, D+ 172 m
+       60 % en parc/bois · 25 % au bord de l'eau (Trois Fontaines) · 88 % sur chemins/voies piétonnes
+Résultats : poc/results/results.json
 
-Appels réseau : 200 (cache : 12, échecs réessayés : 0)
+Appels réseau : 212 (cache : 223, échecs réessayés : 0)

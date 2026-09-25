@@ -64,5 +64,8 @@ for (const s of STARTS.filter((s) => !startFilter || s.id.includes(startFilter))
 }
 
 await mkdir(join(HERE, 'results'), { recursive: true });
-await writeFile(join(HERE, 'results', 'results.json'), JSON.stringify(results));
+// Un test partiel (filtre) n'écrase pas les résultats complets utilisés par le rapport.
+const outFile = startFilter || distFilter.length ? 'results-partiel.json' : 'results.json';
+await writeFile(join(HERE, 'results', outFile), JSON.stringify(results));
+console.log(`Résultats : poc/results/${outFile}`);
 console.log(`\nAppels réseau : ${stats.network} (cache : ${stats.cached}, échecs réessayés : ${stats.retries})`);
