@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boucles – maquette</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="data.js"></script>
+<style>
+  :root {
+    --page: #e9e5dc; --screen: #faf8f3; --card: #ffffff; --ink: #15201b; --muted: #6d746f; --line: #e4e0d6;
+    --accent: #ff5a1f; --accent-ink: #ffffff; --soft: #f1ede4;
+    --l1: #ff5a1f; --l2: #2e86ab; --l3: #8e6bbf;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--ink); font: 14px/1.4 Inter, system-ui, sans-serif; }
+  header { max-width: 1180px; margin: 0 auto; padding: 24px 16px 4px; }
+  header h1 { font: 700 28px/1 'Barlow Condensed', sans-serif; letter-spacing: .3px; margin: 0; }
+  header p { margin: 6px 0 0; color: var(--muted); }
+  .phones { display: flex; gap: 28px; justify-content: center; flex-wrap: wrap; padding: 20px 16px 40px; }
+  .phone-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .phone-wrap .cap { font-weight: 600; color: var(--muted); font-size: 13px; }
+  .phone { width: 360px; height: 740px; border-radius: 44px; background: #111; padding: 10px; box-shadow: 0 20px 50px rgba(0,0,0,.18); }
+  .screen { position: relative; width: 100%; height: 100%; border-radius: 35px; overflow: hidden; background: var(--screen); display: flex; flex-direction: column; }
+  .status { height: 34px; flex: none; display: flex; justify-content: space-between; align-items: center; padding: 0 26px; font-size: 12px; font-weight: 600; }
+  .appbar { display: flex; align-items: center; gap: 10px; padding: 6px 18px 10px; }
+  .appbar h2 { font: 700 24px/1 'Barlow Condensed', sans-serif; margin: 0; flex: 1; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); display: grid; place-items: center; font-size: 16px; cursor: pointer; }
+  .body { flex: 1; overflow: auto; padding: 0 18px 18px; }
+
+  /* Écran 1 */
+  .field { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; margin-bottom: 10px; }
+  .field label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); }
+  .field .val { display: flex; align-items: center; gap: 8px; font-weight: 500; font-size: 15px; margin-top: 2px; }
+  .field .val span { flex: 1; }
+  .gps { font-size: 12px; font-weight: 600; color: var(--accent); background: #fff1eb; border-radius: 999px; padding: 4px 10px; cursor: pointer; }
+  .suggest { margin: -4px 0 10px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 13px; }
+  .suggest div { padding: 8px 14px; border-top: 1px solid var(--line); } .suggest div:first-child { border: 0; }
+  .suggest small { color: var(--muted); }
+  .dist { text-align: center; padding: 14px 0 6px; }
+  .dist .big { font: 700 64px/1 'Barlow Condensed', sans-serif; }
+  .dist .big small { font-size: 26px; margin-left: 4px; }
+  .dist .sub { color: var(--muted); font-size: 12px; }
+  input[type=range] { width: 100%; accent-color: var(--accent); }
+  .presets { display: flex; gap: 6px; justify-content: center; margin: 6px 0 16px; }
+  .presets button { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 5px 11px; font: inherit; font-size: 12px; cursor: pointer; }
+  .section-t { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin: 4px 0 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .chip { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 8px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+  .chip[aria-pressed=true] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .cta { width: 100%; border: 0; border-radius: 16px; padding: 16px; background: var(--accent); color: var(--accent-ink); font: 700 20px/1 'Barlow Condensed', sans-serif; letter-spacing: .5px; cursor: pointer; }
+  .fine { text-align: center; color: var(--muted); font-size: 11px; margin-top: 8px; }
+
+  /* Écrans 2 et 3 : carte */
+  .map { position: absolute; inset: 0; }
+  .overlay-top { position: absolute; top: 34px; left: 0; right: 0; z-index: 2; display: flex; align-items: center; gap: 10px; padding: 6px 14px; }
+  .pill { background: var(--card); border-radius: 999px; padding: 8px 14px; box-shadow: 0 2px 10px rgba(0,0,0,.12); font-weight: 600; font-size: 13px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .status.on-map { position: absolute; top: 0; left: 0; right: 0; z-index: 2; }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; background: var(--screen); border-radius: 22px 22px 0 0; box-shadow: 0 -6px 20px rgba(0,0,0,.1); padding: 8px 0 16px; }
+  .grab { width: 40px; height: 5px; border-radius: 3px; background: #d6d1c5; margin: 0 auto 8px; }
+  .sheet h3 { margin: 0 18px 8px; font: 700 18px/1 'Barlow Condensed', sans-serif; }
+  .cards { display: flex; gap: 10px; overflow-x: auto; padding: 2px 18px 4px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .lcard { flex: none; width: 250px; scroll-snap-align: start; background: var(--card); border: 2px solid var(--line); border-radius: 16px; padding: 12px; cursor: pointer; }
+  .lcard.sel { border-color: var(--c); }
+  .lcard .top { display: flex; align-items: center; gap: 8px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--c); flex: none; }
+  .lcard .km { font: 700 26px/1 'Barlow Condensed', sans-serif; }
+  .lcard .meta { color: var(--muted); font-size: 12px; margin-left: auto; text-align: right; }
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
+  .tag { font-size: 11.5px; background: var(--soft); border-radius: 8px; padding: 3px 7px; }
+  .tag.warn { background: #fdecea; color: #a1281c; }
+  .bar { height: 6px; border-radius: 3px; background: var(--soft); overflow: hidden; display: flex; margin-top: 10px; }
+  .legend { display: flex; gap: 10px; font-size: 10.5px; color: var(--muted); margin-top: 5px; }
+  .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 3px; vertical-align: -1px; }
+
+  /* Écran 3 */
+  .detail .mapbox { position: relative; height: 290px; flex: none; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0 12px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 9px 10px; }
+  .stat b { display: block; font: 700 24px/1.05 'Barlow Condensed', sans-serif; }
+  .stat span { font-size: 11px; color: var(--muted); }
+  .profile { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px 6px; margin-bottom: 12px; }
+  .profile svg { width: 100%; height: 90px; display: block; }
+  .why { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; margin-bottom: 12px; }
+  .why ul { margin: 6px 0 0; padding-left: 18px; }
+  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .btn { border: 1px solid var(--line); background: var(--card); border-radius: 14px; padding: 12px; font: 600 14px Inter, sans-serif; cursor: pointer; }
+  .btn.primary { grid-column: 1 / -1; background: var(--accent); color: #fff; border: 0; font: 700 19px/1 'Barlow Condensed', sans-serif; padding: 15px; letter-spacing: .5px; }
+  .maplibregl-ctrl-attrib { font-size: 9px; }
+  .note { max-width: 1180px; margin: 0 auto; padding: 0 16px 40px; color: var(--muted); font-size: 12.5px; }
+  @media (max-width: 420px) { .phone { width: 100%; max-width: 360px; } .phones { padding-left: 8px; padding-right: 8px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Boucles : maquette de l'app</h1>
+  <p>Maquette cliquable. Les parcours affichés sont de vraies boucles générées par la preuve de concept (Place de la République, 10 km).</p>
+</header>
+
+<div class="phones">
+  <!-- Écran 1 : saisie -->
+  <div class="phone-wrap"><div class="cap">1 · Nouvelle boucle</div>
+  <div class="phone"><div class="screen">
+    <div class="status"><span>9:41</span><span>●●● 5G</span></div>
+    <div class="appbar"><h2>Nouvelle boucle</h2><button class="icon-btn" title="Favoris">♡</button></div>
+    <div class="body">
+      <div class="field"><label>Ville</label><div class="val"><span>Paris</span>⌄</div></div>
+      <div class="field"><label>Point de départ</label><div class="val"><span id="startLabel">Place de la République</span><button class="gps">◎ Ma position</button></div></div>
+      <div class="suggest">
+        <div>Place de la République <small>· Paris 3ᵉ</small></div>
+        <div>République <small>· station de métro</small></div>
+      </div>
+      <div class="dist">
+        <div class="big"><span id="kmVal">10</span><small>km</small></div>
+        <div class="sub" id="kmSub">≈ 55 min à 5:30/km</div>
+      </div>
+      <input type="range" id="km" min="3" max="42" step="1" value="10" aria-label="Distance">
+      <div class="presets">
+        <button data-km="5">5 km</button><button data-km="10">10 km</button><button data-km="21">Semi</button><button data-km="42">Marathon</button>
+      </div>
+      <div class="section-t">Je préfère</div>
+      <div class="chips">
+        <button class="chip" aria-pressed="true">🌳 Nature</button>
+        <button class="chip" aria-pressed="true">💧 Bord de l'eau</button>
+        <button class="chip" aria-pressed="false">💡 Éclairé</button>
+        <button class="chip" aria-pressed="true">🚗 Éviter les routes</button>
+        <button class="chip" aria-pressed="false">⛰ Peu de dénivelé</button>
+      </div>
+      <button class="cta" id="go">TROUVER MES BOUCLES</button>
+      <div class="fine">3 propositions en ~15 s · données OpenStreetMap</div>
+    </div>
+  </div></div></div>
+
+  <!-- Écran 2 : propositions -->
+  <div class="phone-wrap"><div class="cap">2 · Propositions</div>
+  <div class="phone"><div class="screen" id="s2">
+    <div id="map2" class="map"></div>
+    <div class="status on-map"><span>9:41</span><span>●●● 5G</span></div>
+    <div class="overlay-top"><button class="icon-btn">←</button><div class="pill">Place de la République · 10 km</div><button class="icon-btn" title="Relancer">↻</button></div>
+    <div class="sheet">
+      <div class="grab"></div>
+      <h3>3 boucles trouvées</h3>
+      <div class="cards" id="cards"></div>
+    </div>
+  </div></div></div>
+
+  <!-- Écran 3 : détail -->
+  <div class="phone-wrap"><div class="cap">3 · Détail de la boucle</div>
+  <div class="phone"><div class="screen detail">
+    <div class="mapbox"><div id="map3" class="map"></div>
+      <div class="status on-map"><span>9:41</span><span>●●● 5G</span></div>
+      <div class="overlay-top"><button class="icon-btn">←</button><div style="flex:1"></div><button class="icon-btn" title="Favori">♡</button></div>
+    </div>
+    <div class="body">
+      <div class="stats">
+        <div class="stat"><b id="dKm">–</b><span>distance</span></div>
+        <div class="stat"><b id="dUp">–</b><span>dénivelé +</span></div>
+        <div class="stat"><b id="dTime">–</b><span>à 5:30/km</span></div>
+      </div>
+      <div class="profile"><div class="section-t" style="margin:0">Profil d'altitude</div><svg id="prof" viewBox="0 0 300 90" preserveAspectRatio="none"></svg></div>
+      <div class="why"><div class="section-t" style="margin:0">Pourquoi cette boucle</div><ul id="dWhy"></ul></div>
+      <div class="actions">
+        <button class="btn primary">▶ DÉMARRER</button>
+        <button class="btn">⤓ Exporter GPX</button>
+        <button class="btn">↗ Partager</button>
+      </div>
+    </div>
+  </div></div></div>
+</div>
+
+<p class="note">Maquette statique : le formulaire ne relance pas de calcul. Les distances, dénivelés, explications et tracés viennent de <code>npm run poc</code>. Fond de carte OpenFreeMap © OpenMapTiles, données © OpenStreetMap.</p>
+
+<script>
+const D = window.DEMO;
+const COLORS = ['#ff5a1f', '#2e86ab', '#8e6bbf'];
+const STYLE = 'https://tiles.openfreemap.org/styles/positron';
+const PACE = 5.5; // min/km
+let sel = 0;
+
+const fmtTime = (km) => { const m = Math.round(km * PACE); return m >= 60 ? Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0') : m + ' min'; };
+const fmtKm = (m) => (m / 1000).toFixed(1).replace('.', ',');
+
+// Écran 1 : curseur de distance et préférences.
+const km = document.getElementById('km');
+const updKm = () => { document.getElementById('kmVal').textContent = km.value; document.getElementById('kmSub').textContent = '≈ ' + fmtTime(+km.value) + ' à 5:30/km'; };
+km.oninput = updKm;
+document.querySelectorAll('.presets button').forEach(b => b.onclick = () => { km.value = b.dataset.km; updKm(); });
+document.querySelectorAll('.chip').forEach(c => c.onclick = () => c.setAttribute('aria-pressed', c.getAttribute('aria-pressed') !== 'true'));
+document.getElementById('go').onclick = () => document.getElementById('s2').scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'center' });
+
+// Écran 2 : cartes des propositions.
+const pct = (x) => Math.round((x || 0) * 100);
+const shortTag = (r) => r.replace(/\s*\(.*?\)/, '').replace('sur chemins/voies piétonnes', 'chemins piétons').replace("au bord de l'eau", "bord de l'eau").replace('sur des parcours balisés', 'balisé').replace('en parc/bois', 'parc/bois');
+const place = (r) => (r.match(/\((.*?)\)/) || [])[1];
+const cards = document.getElementById('cards');
+D.loops.forEach((l, i) => {
+  const m = l.metrics;
+  const el = document.createElement('div');
+  el.className = 'lcard' + (i === 0 ? ' sel' : '');
+  el.style.setProperty('--c', COLORS[i]);
+  const places = [...new Set(l.reasons.map(place).filter(Boolean))].slice(0, 2).join(' · ');
+  el.innerHTML = `<div class="top"><span class="dot"></span><span class="km">${fmtKm(l.lengthM)} km</span><span class="meta">D+ ${l.elevationGain} m<br>${fmtTime(l.lengthM / 1000)}</span></div>
+    ${places ? `<div style="font-size:12.5px;margin-top:6px;font-weight:500">${places}</div>` : ''}
+    <div class="tags">${l.reasons.map(r => `<span class="tag ${r.startsWith('⚠') ? 'warn' : ''}">${shortTag(r)}</span>`).join('')}</div>
+    <div class="bar"><span style="width:${pct(m.green)}%;background:#4f9d69"></span><span style="width:${pct(m.water)}%;background:#4aa3df"></span><span style="width:${pct(m.route)}%;background:#e0a526"></span></div>
+    <div class="legend"><span><i style="background:#4f9d69"></i>parc ${pct(m.green)} %</span><span><i style="background:#4aa3df"></i>eau ${pct(m.water)} %</span><span><i style="background:#e0a526"></i>balisé ${pct(m.route)} %</span></div>`;
+  el.onclick = () => select(i);
+  cards.appendChild(el);
+});
+
+function loopsFC(only) {
+  return { type: 'FeatureCollection', features: D.loops.map((l, i) => ({ type: 'Feature', properties: { i, on: only == null || only === i ? 1 : 0, sel: i === sel ? 1 : 0 }, geometry: { type: 'LineString', coordinates: l.coords } })).sort((a, b) => a.properties.sel - b.properties.sel) };
+}
+function addLoops(map, detail) {
+  map.addSource('loops', { type: 'geojson', data: loopsFC(detail ? sel : null) });
+  map.addLayer({ id: 'casing', type: 'line', source: 'loops', filter: ['==', ['get', 'on'], 1], layout: { 'line-join': 'round', 'line-cap': 'round' }, paint: { 'line-color': '#fff', 'line-width': ['case', ['==', ['get', 'sel'], 1], 8, 5] } });
+  map.addLayer({ id: 'loops', type: 'line', source: 'loops', filter: ['==', ['get', 'on'], 1], layout: { 'line-join': 'round', 'line-cap': 'round' }, paint: {
+    'line-color': ['match', ['get', 'i'], 0, COLORS[0], 1, COLORS[1], COLORS[2]],
+    'line-width': ['case', ['==', ['get', 'sel'], 1], 5, 3], 'line-opacity': ['case', ['==', ['get', 'sel'], 1], 1, 0.55] } });
+  const el = document.createElement('div');
+  el.style.cssText = 'width:18px;height:18px;border-radius:50%;background:#15201b;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)';
+  new maplibregl.Marker({ element: el }).setLngLat(D.start.coord).addTo(map);
+}
+function fit(map, coords, pad) {
+  const b = new maplibregl.LngLatBounds();
+  coords.forEach(p => b.extend(p));
+  const c = map.getContainer();
+  if (c.clientWidth < 100) return setTimeout(() => fit(map, coords, pad), 200);
+  map.resize();
+  map.fitBounds(b, { padding: pad, duration: 0 });
+}
+
+const map2 = new maplibregl.Map({ container: 'map2', style: STYLE, center: D.start.coord, zoom: 12, attributionControl: { compact: true } });
+map2.on('load', () => { addLoops(map2, false); fit(map2, D.loops.flatMap(l => l.coords), { top: 80, bottom: 250, left: 30, right: 30 }); });
+const map3 = new maplibregl.Map({ container: 'map3', style: STYLE, center: D.start.coord, zoom: 12, attributionControl: { compact: true } });
+map3.on('load', () => { addLoops(map3, true); fit(map3, D.loops[sel].coords, { top: 60, bottom: 20, left: 24, right: 24 }); });
+
+// Écran 3 : détail de la boucle sélectionnée.
+function renderDetail() {
+  const l = D.loops[sel];
+  document.getElementById('dKm').textContent = fmtKm(l.lengthM) + ' km';
+  document.getElementById('dUp').textContent = l.elevationGain + ' m';
+  document.getElementById('dTime').textContent = fmtTime(l.lengthM / 1000);
+  document.getElementById('dWhy').innerHTML = l.reasons.map(r => '<li>' + r + '</li>').join('');
+  const pts = l.profile.filter(p => p[1] != null);
+  const maxD = pts.at(-1)[0], hs = pts.map(p => p[1]);
+  const lo = Math.min(...hs) - 5, hi = Math.max(...hs) + 5;
+  const X = d => (d / maxD) * 300, Y = h => 80 - ((h - lo) / (hi - lo)) * 70;
+  const line = pts.map((p, i) => (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ',' + Y(p[1]).toFixed(1)).join('');
+  document.getElementById('prof').innerHTML =
+    `<path d="${line}L300,90L0,90Z" fill="${COLORS[sel]}" fill-opacity=".15"/><path d="${line}" fill="none" stroke="${COLORS[sel]}" stroke-width="2" vector-effect="non-scaling-stroke"/>` +
+    `<text x="2" y="10" font-size="9" fill="#6d746f">${Math.max(...hs)} m</text><text x="2" y="88" font-size="9" fill="#6d746f">${Math.min(...hs)} m</text>`;
+}
+function select(i) {
+  sel = i;
+  document.querySelectorAll('.lcard').forEach((c, k) => c.classList.toggle('sel', k === i));
+  if (map2.getSource('loops')) map2.getSource('loops').setData(loopsFC(null));
+  if (map3.getSource('loops')) { map3.getSource('loops').setData(loopsFC(sel)); fit(map3, D.loops[sel].coords, { top: 60, bottom: 20, left: 24, right: 24 }); }
+  renderDetail();
+}
+renderDetail();
+</script>
+</body>
+</html>
