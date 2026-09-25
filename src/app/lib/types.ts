@@ -6,7 +6,6 @@ export type Place = {
   label: string; // ex. « Place de la République »
   detail?: string; // ex. « Paris 3e »
   coord: LonLat;
-  extent?: [number, number, number, number]; // [ouest, nord, est, sud] (Photon)
 };
 
 export type Prefs = { nature: boolean; water: boolean; lit: boolean; avoidRoads: boolean; flat: boolean };
@@ -31,6 +30,6 @@ export type Loop = {
   metrics: LoopMetrics;
 };
 
-export type Search = { city?: Place; start: Place; km: number; prefs: Prefs };
+export type Search = { start: Place; km: number; prefs: Prefs };
 
 export type Favorite = { id: string; createdAt: number; search: Search; loop: Loop; name: string };

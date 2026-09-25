@@ -1,7 +1,7 @@
-// Écran 1 : ville, point de départ, distance, préférences.
+// Écran 1 : point de départ, distance, préférences.
 import { useState } from 'react';
 import PlaceField from '../components/PlaceField';
-import { searchCities, searchPlaces, reverse } from '../lib/geocode';
+import { searchPlaces, reverse } from '../lib/geocode';
 import { fmtDuration } from '../lib/format';
 import type { Place, Prefs, Search } from '../lib/types';
 
@@ -23,7 +23,6 @@ const PREF_CHIPS: { key: keyof Prefs; label: string }[] = [
 type Props = { initial: Search | null; onSubmit: (s: Search) => void; onFavorites: () => void; favoritesCount: number };
 
 export default function FormScreen({ initial, onSubmit, onFavorites, favoritesCount }: Props) {
-  const [city, setCity] = useState<Place | undefined>(initial?.city);
   const [start, setStart] = useState<Place | undefined>(initial?.start);
   const [km, setKm] = useState(initial?.km ?? 10);
   const [prefs, setPrefs] = useState<Prefs>(initial?.prefs ?? { nature: true, water: true, avoidRoads: true, lit: false, flat: false });
@@ -38,9 +37,7 @@ export default function FormScreen({ initial, onSubmit, onFavorites, favoritesCo
       async (pos) => {
         const coord: [number, number] = [pos.coords.longitude, pos.coords.latitude];
         try {
-          const r = await reverse(coord);
-          setStart(r.place);
-          if (r.city) setCity(r.city);
+          setStart(await reverse(coord));
         } catch {
           setStart({ label: 'Ma position', coord });
         }
@@ -69,13 +66,13 @@ export default function FormScreen({ initial, onSubmit, onFavorites, favoritesCo
         </button>
       </header>
       <div className="body">
-        <PlaceField label="Ville" placeholder="Paris, Bruxelles…" value={city} onChange={setCity} search={(q, s) => searchCities(q, s)} />
         <PlaceField
           label="Point de départ"
-          placeholder="Adresse, place, parc, station…"
+          placeholder="Ex. Parc du Cinquantenaire, Bruxelles"
           value={start}
           onChange={setStart}
-          search={(q, s) => searchPlaces(q, city, s)}
+          // Les résultats proches du dernier départ utilisé passent en premier.
+          search={(q, s) => searchPlaces(q, start ?? initial?.start, s)}
           action={
             <button type="button" className="gps" onClick={locate} disabled={locating}>
               {locating ? 'Recherche…' : '◎ Ma position'}
@@ -109,7 +106,7 @@ export default function FormScreen({ initial, onSubmit, onFavorites, favoritesCo
           ))}
         </div>
 
-        <button className="cta" disabled={!start} onClick={() => start && onSubmit({ city, start, km, prefs })}>
+        <button className="cta" disabled={!start} onClick={() => start && onSubmit({ start, km, prefs })}>
           {start ? 'TROUVER MES BOUCLES' : 'CHOISIS UN POINT DE DÉPART'}
         </button>
         <p className="fine">3 propositions en 10 à 15 s · données © OpenStreetMap</p>

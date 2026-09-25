@@ -16,65 +16,87 @@ type PhotonFeature = {
     state?: string;
     country?: string;
     osm_value?: string;
-    extent?: [number, number, number, number];
   };
+};
+
+// Type de lieu en clair, pour distinguer des homonymes (la place, la station…).
+const TYPE_FR: Record<string, string> = {
+  square: 'place',
+  pedestrian: 'voie piétonne',
+  station: 'station',
+  halt: 'gare',
+  subway_entrance: 'entrée de métro',
+  stop: 'arrêt',
+  platform: 'arrêt',
+  park: 'parc',
+  garden: 'jardin',
+  wood: 'bois',
+  forest: 'forêt',
+  nature_reserve: 'réserve naturelle',
+  bridge: 'pont',
+  city: 'ville',
+  town: 'ville',
+  village: 'village',
+  suburb: 'quartier',
+  neighbourhood: 'quartier',
+  quarter: 'quartier',
+  house: 'adresse',
+  residential: 'rue',
+  primary: 'rue',
+  secondary: 'rue',
+  tertiary: 'rue',
+  living_street: 'rue',
+  stadium: 'stade',
+  track: 'piste',
+  sports_centre: 'centre sportif',
 };
 
 function toPlace(f: PhotonFeature): Place {
   const p = f.properties;
   const street = [p.housenumber, p.street].filter(Boolean).join(' ');
   const label = p.name || street || p.city || 'Point sans nom';
-  const detail = [p.name && street && street !== p.name ? street : null, p.city && p.city !== label ? p.city : null, p.city ? null : p.country]
+  const type = TYPE_FR[p.osm_value ?? ''];
+  const detail = [type, p.name && street && street !== p.name ? street : null, p.city && p.city !== label ? p.city : null, p.city ? null : p.country]
     .filter(Boolean)
     .join(', ');
-  return { label, detail: detail || undefined, coord: f.geometry.coordinates, extent: p.extent };
+  return { label, detail: detail || undefined, coord: f.geometry.coordinates };
 }
 
-// Deux résultats au même endroit avec le même nom : on n'en garde qu'un.
+// Même nom, même description, à moins de ~300 m : on n'en garde qu'un.
 function dedupe(places: Place[]) {
-  const seen = new Set<string>();
-  return places.filter((p) => {
-    const k = `${p.label}|${p.coord.map((v) => v.toFixed(3)).join(',')}`;
-    if (seen.has(k)) return false;
-    seen.add(k);
-    return true;
-  });
+  const kept: Place[] = [];
+  for (const p of places) {
+    const twin = kept.some((k) => k.label === p.label && k.detail === p.detail && Math.abs(k.coord[0] - p.coord[0]) < 0.004 && Math.abs(k.coord[1] - p.coord[1]) < 0.003);
+    if (!twin) kept.push(p);
+  }
+  return kept;
 }
 
-/** Villes correspondant au texte saisi. */
-export async function searchCities(q: string, signal?: AbortSignal): Promise<Place[]> {
+/**
+ * Lieux (adresses, places, parcs, stations, villes…). La ville se tape dans
+ * la même recherche (« Parc du Cinquantenaire, Bruxelles ») ; `near` fait
+ * passer en premier les résultats proches (ex. dernier départ utilisé).
+ */
+export async function searchPlaces(q: string, near?: Place, signal?: AbortSignal): Promise<Place[]> {
   const params = new URLSearchParams({ q, lang: 'fr', limit: '6' });
-  for (const tag of ['place:city', 'place:town', 'place:village', 'place:municipality']) params.append('osm_tag', tag);
-  const res = await fetchJson(`${BASE}/api/?${params}`, { signal, tries: 2, timeoutMs: 10000 });
-  return dedupe((res.features as PhotonFeature[]).map(toPlace));
-}
-
-/** Lieux (adresses, places, parcs, stations…), de préférence dans la ville choisie. */
-export async function searchPlaces(q: string, city?: Place, signal?: AbortSignal): Promise<Place[]> {
-  const params = new URLSearchParams({ q, lang: 'fr', limit: '6' });
-  if (city) {
-    params.set('lat', String(city.coord[1]));
-    params.set('lon', String(city.coord[0]));
-    if (city.extent) {
-      const [w, n, e, s] = city.extent;
-      params.set('bbox', [w, s, e, n].join(','));
-    }
+  if (near) {
+    params.set('lat', String(near.coord[1]));
+    params.set('lon', String(near.coord[0]));
+    // Préférence légère pour les lieux proches : une ville tapée dans la
+    // recherche (« République Paris ») doit l'emporter sur la proximité.
+    params.set('zoom', '10');
+    params.set('location_bias_scale', '0.5');
   }
   const res = await fetchJson(`${BASE}/api/?${params}`, { signal, tries: 2, timeoutMs: 10000 });
   return dedupe((res.features as PhotonFeature[]).map(toPlace));
 }
 
 /** Adresse la plus proche d'une position (pour « Ma position »). */
-export async function reverse(coord: LonLat): Promise<{ place: Place; city?: Place }> {
+export async function reverse(coord: LonLat): Promise<Place> {
   const params = new URLSearchParams({ lat: String(coord[1]), lon: String(coord[0]), lang: 'fr' });
   const res = await fetchJson(`${BASE}/reverse?${params}`, { tries: 2, timeoutMs: 10000 });
   const f = (res.features as PhotonFeature[])[0];
-  if (!f) return { place: { label: 'Ma position', coord } };
-  const near = toPlace(f);
-  const cityName = f.properties.city;
-  return {
-    // On garde la position exacte du téléphone, avec le nom de l'adresse la plus proche.
-    place: { label: 'Ma position', detail: [near.label, cityName].filter(Boolean).join(', '), coord },
-    city: cityName ? { label: cityName, coord } : undefined,
-  };
+  if (!f) return { label: 'Ma position', coord };
+  // On garde la position exacte du téléphone, avec le nom de l'adresse la plus proche.
+  return { label: 'Ma position', detail: [toPlace(f).label, f.properties.city].filter(Boolean).join(', '), coord };
 }
