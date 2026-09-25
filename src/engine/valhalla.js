@@ -8,7 +8,7 @@ import { fetchJson } from './net.js';
 import { decodePolyline } from './geo.js';
 
 const BASE = 'https://valhalla1.openstreetmap.de';
-const HEADERS = { 'X-Client-Id': 'boucles-running-poc' };
+const HEADERS = { 'X-Client-Id': 'boucles-running' }; // identifiant demandé par FOSSGIS
 const MAX_LOCATIONS = 10;
 
 // Réglages du profil piéton qui favorisent les chemins et voies piétonnes.
@@ -26,7 +26,7 @@ export const PEDESTRIAN_OPTIONS = {
 const toLoc = ([lon, lat], type) => ({ lat: +lat.toFixed(6), lon: +lon.toFixed(6), type, radius: type === 'break' ? 0 : 60 });
 const toShape = (coords) => coords.map(([lon, lat]) => ({ lat: +lat.toFixed(5), lon: +lon.toFixed(5) }));
 
-async function routeRequest(locations, options) {
+async function routeRequest(locations, options, signal) {
   const body = JSON.stringify({
     locations,
     costing: 'pedestrian',
@@ -34,7 +34,7 @@ async function routeRequest(locations, options) {
     units: 'kilometers',
     directions_type: 'none',
   });
-  return fetchJson(`${BASE}/route`, { body, headers: HEADERS });
+  return fetchJson(`${BASE}/route`, { body, headers: HEADERS, signal });
 }
 
 /**
@@ -47,7 +47,7 @@ async function routeRequest(locations, options) {
  *
  * @returns {results: [{coords, lengthKm} | {error}], requests}
  */
-export async function routeLoops(start, loops, options = {}) {
+export async function routeLoops(start, loops, options = {}, signal) {
   // Groupes de boucles tenant dans MAX_LOCATIONS points d'arrêt.
   const groups = [];
   let cur = [];
@@ -72,7 +72,7 @@ export async function routeLoops(start, loops, options = {}) {
       for (const p of loops[i]) locations.push(toLoc(p, 'through'));
       locations.push(toLoc(start, 'break'));
     }
-    const res = await routeRequest(locations, options);
+    const res = await routeRequest(locations, options, signal);
     requests++;
     if (res.trip && res.trip.legs.length === group.length) {
       group.forEach((i, k) => {
@@ -87,7 +87,7 @@ export async function routeLoops(start, loops, options = {}) {
         results[i] = { error: res.error || 'pas de trajet' };
         continue;
       }
-      const single = await routeRequest([toLoc(start, 'break'), ...loops[i].map((p) => toLoc(p, 'through')), toLoc(start, 'break')], options);
+      const single = await routeRequest([toLoc(start, 'break'), ...loops[i].map((p) => toLoc(p, 'through')), toLoc(start, 'break')], options, signal);
       requests++;
       results[i] = single.trip
         ? { coords: decodePolyline(single.trip.legs[0].shape, 6), lengthKm: single.trip.legs[0].summary.length }
@@ -105,14 +105,14 @@ export async function routeLoops(start, loops, options = {}) {
  * entre les boucles.
  * @returns liste, par boucle, des tronçons {length, use, road_class, …}
  */
-export async function traceLoops(coordsList) {
+export async function traceLoops(coordsList, signal) {
   const body = JSON.stringify({
     shape: toShape(coordsList.flat()),
     shape_match: 'walk_or_snap',
     costing: 'pedestrian',
     filters: { attributes: ['edge.length', 'edge.use', 'edge.road_class', 'edge.surface', 'edge.names', 'matched.edge_index'], action: 'include' },
   });
-  const res = await fetchJson(`${BASE}/trace_attributes`, { body, headers: HEADERS });
+  const res = await fetchJson(`${BASE}/trace_attributes`, { body, headers: HEADERS, signal });
   const edges = res.edges ?? [];
   const matched = res.matched_points ?? [];
   let offset = 0;
@@ -132,9 +132,9 @@ export async function traceLoops(coordsList) {
  * rééchantillonnés régulièrement ; on renvoie, par tracé, [[distance, altitude]].
  * @param sampled liste de {coords, dists} (dists = abscisse de chaque point, en m)
  */
-export async function heightsLoops(sampled) {
+export async function heightsLoops(sampled, signal) {
   const body = JSON.stringify({ shape: toShape(sampled.flatMap((s) => s.coords)) });
-  const res = await fetchJson(`${BASE}/height`, { body, headers: HEADERS });
+  const res = await fetchJson(`${BASE}/height`, { body, headers: HEADERS, signal });
   const h = res.height ?? [];
   let offset = 0;
   return sampled.map((s) => {

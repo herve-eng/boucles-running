@@ -46,8 +46,9 @@ function topNames(names, k = 2) {
 /**
  * @param xy tracé en coordonnées locales (m)
  * @param edges attributs Valhalla (peut être vide si non demandés)
+ * @param weights poids de chaque critère (voir preferences.js)
  */
-export function scoreLoop(xy, ctx, targetM, edges = []) {
+export function scoreLoop(xy, ctx, targetM, edges = [], weights = WEIGHTS) {
   const samples = resample(xy, STEP);
   const total = samples.at(-1).s;
   let green = 0, water = 0, route = 0;
@@ -83,7 +84,7 @@ export function scoreLoop(xy, ctx, targetM, edges = []) {
   }
 
   let score = 0;
-  for (const [k, w] of Object.entries(WEIGHTS)) score += w * (m[k] ?? 0);
+  for (const [k, w] of Object.entries(weights)) score += w * (m[k] ?? 0);
   score -= 200 * Math.max(0, Math.abs(m.distErr) - 0.05);
 
   const pct = (x) => `${Math.round(x * 100)} %`;

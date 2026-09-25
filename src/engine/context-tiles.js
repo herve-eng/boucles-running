@@ -92,7 +92,12 @@ function addTile(ctx, vt, { z, x, y }, toXY) {
 
 /**
  * Charge le contexte dans un carré de demi-côté `radius` mètres.
- * @param onProgress (fait, total) appelé à chaque tuile reçue
+ * `onProgress(fait, total)` est appelé à chaque tuile reçue.
+ * @param {[number, number]} start
+ * @param {number} radius
+ * @param {any} proj
+ * @param {{onProgress?: (done: number, total: number) => void, signal?: AbortSignal}} [options]
+ * @returns {Promise<any>}
  */
 export async function loadTileContext(start, radius, proj, { onProgress, signal } = {}) {
   const t0 = Date.now();

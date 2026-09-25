@@ -71,6 +71,9 @@ export function hashKey(str) {
  * Requête HTTP avec cache. POST si `body` est fourni, GET sinon.
  * `urls` peut être une liste de miroirs : on passe au suivant en cas d'échec.
  * `as` : 'json' (défaut) ou 'bytes' (Uint8Array, pour les tuiles).
+ * @param {string | string[]} urls
+ * @param {{body?: string, headers?: Record<string, string>, form?: boolean, tries?: number, timeoutMs?: number, as?: 'json' | 'bytes', signal?: AbortSignal}} [options]
+ * @returns {Promise<any>}
  */
 export async function fetchJson(urls, { body, headers = {}, form = false, tries = 4, timeoutMs = 60000, as = 'json', signal } = {}) {
   urls = [].concat(urls);

@@ -5,21 +5,19 @@ import { dist, lineLength, mulberry32, resample } from './geo.js';
 import { trimSpurs } from './spurs.js';
 import { routeLoops, traceLoops, heightsLoops } from './valhalla.js';
 import { scoreLoop, similarity, elevation } from './score.js';
+import { profileFor } from './preferences.js';
 
 const TOLERANCE = 0.05; // écart de distance accepté
 const MAX_ITER = 5;
 const POINTS_PER_LOOP = 3;
-// Préférence d'aimantation : un parcours balisé à 100 m « vaut » un parc à 80 m, etc.
-const ATTRACT_BIAS = { route: 0.8, track: 0.8, water: 0.9, green: 1 };
-
-function snapToAttractor(ctx, p, maxShift, avoid) {
+function snapToAttractor(ctx, p, maxShift, avoid, bias) {
   let best = null;
   let bestCost = Infinity;
   for (const a of ctx.attractors.queryRadius(p, maxShift)) {
     const d = dist(p, a.p);
     if (d > maxShift) continue;
     if (avoid.some((q) => dist(q, a.p) < maxShift * 0.5)) continue; // évite deux points collés
-    const cost = d * ATTRACT_BIAS[a.type];
+    const cost = d * (bias[a.type] ?? 1);
     if (cost < bestCost) {
       bestCost = cost;
       best = a;
@@ -28,7 +26,7 @@ function snapToAttractor(ctx, p, maxShift, avoid) {
   return best;
 }
 
-function waypoints(ctx, startXY, r, theta, n) {
+function waypoints(ctx, startXY, r, theta, n, bias) {
   // Le cercle passe par le départ : son centre est à distance r dans la direction theta.
   const c = [startXY[0] + r * Math.cos(theta), startXY[1] + r * Math.sin(theta)];
   const phi0 = theta + Math.PI; // angle du départ vu depuis le centre
@@ -37,7 +35,7 @@ function waypoints(ctx, startXY, r, theta, n) {
   for (let j = 1; j <= n; j++) {
     const phi = phi0 + (j * 2 * Math.PI) / (n + 1);
     const ideal = [c[0] + r * Math.cos(phi), c[1] + r * Math.sin(phi)];
-    const a = snapToAttractor(ctx, ideal, Math.max(150, 0.35 * r), [startXY, ...pts]);
+    const a = snapToAttractor(ctx, ideal, Math.max(150, 0.35 * r), [startXY, ...pts], bias);
     pts.push(a ? a.p : ideal);
     snaps.push(a ? a.type : null);
   }
@@ -65,15 +63,22 @@ const inTolerance = (c) => Math.abs(c.metrics.distErr) <= TOLERANCE;
 const byRank = (a, b) => inTolerance(b) - inTolerance(a) || b.score - a.score;
 
 /**
- * @param start [lon, lat]
- * @returns {candidates, top, calls, ms}
+ * Génère les boucles et renvoie les candidates notées et les 3 meilleures.
+ * Options : `prefs` (voir preferences.js), `onProgress({phase, round, maxRounds})`
+ * avec phase = 'routes' | 'score' | 'elevation', `signal` pour annuler.
+ * @param {[number, number]} start [lon, lat]
+ * @param {number} targetKm
+ * @param {any} ctx
+ * @param {any} proj
+ * @param {{variants?: number, seed?: number, prefs?: object, onProgress?: (p: any) => void, signal?: AbortSignal}} [options]
+ * @returns {Promise<{candidates: any[], top: number[], calls: number, ms: number}>}
  */
-export async function generateLoops(start, targetKm, ctx, proj, { variants = 6, seed = 1, useLit = false } = {}) {
+export async function generateLoops(start, targetKm, ctx, proj, { variants = 6, seed = 1, prefs, onProgress, signal } = {}) {
   const t0 = Date.now();
   const rand = mulberry32(seed);
   const targetM = targetKm * 1000;
   const startXY = proj.toXY(start);
-  const opts = useLit ? { use_lit: 1 } : {};
+  const { weights, attractBias, pedestrian: opts } = profileFor(prefs);
   let calls = 0;
   // Rapport « longueur réelle / périmètre du cercle », appris au fil des tours.
   let detour = 1.3;
@@ -93,8 +98,9 @@ export async function generateLoops(start, targetKm, ctx, proj, { variants = 6, 
   for (let round = 0; round < MAX_ITER; round++) {
     const active = states.filter((st) => !st.done);
     if (!active.length) break;
-    for (const st of active) st.wp = waypoints(ctx, startXY, st.r, st.theta, st.n);
-    const { results, requests } = await routeLoops(start, active.map((st) => st.wp.pts.map(proj.toLonLat)), opts);
+    onProgress?.({ phase: 'routes', round: round + 1, maxRounds: MAX_ITER });
+    for (const st of active) st.wp = waypoints(ctx, startXY, st.r, st.theta, st.n, attractBias);
+    const { results, requests } = await routeLoops(start, active.map((st) => st.wp.pts.map(proj.toLonLat)), opts, signal);
     calls += requests;
 
     const ratios = [];
@@ -124,14 +130,15 @@ export async function generateLoops(start, targetKm, ctx, proj, { variants = 6, 
   // 1re passe de notation sans le type de voie (aucun appel réseau)…
   for (const c of candidates) {
     c.xy = c.coords.map(proj.toXY);
-    Object.assign(c, scoreLoop(c.xy, ctx, targetM));
+    Object.assign(c, scoreLoop(c.xy, ctx, targetM, [], weights));
   }
   candidates.sort(byRank);
   // …puis note complète (type de voie) pour les 4 meilleures, en une requête.
   const finalists = candidates.slice(0, 4);
-  const edgesList = await traceLoops(finalists.map((c) => c.coords));
+  onProgress?.({ phase: 'score' });
+  const edgesList = await traceLoops(finalists.map((c) => c.coords), signal);
   calls++;
-  finalists.forEach((c, k) => Object.assign(c, scoreLoop(c.xy, ctx, targetM, edgesList[k])));
+  finalists.forEach((c, k) => Object.assign(c, scoreLoop(c.xy, ctx, targetM, edgesList[k], weights)));
   finalists.sort(byRank);
 
   // Les 3 meilleures, en écartant les quasi-doublons.
@@ -146,7 +153,8 @@ export async function generateLoops(start, targetKm, ctx, proj, { variants = 6, 
     const pts = resample(c.xy, 30);
     return { coords: pts.map(({ p }) => proj.toLonLat(p)), dists: pts.map(({ s }) => s) };
   });
-  const ranges = await heightsLoops(sampled);
+  onProgress?.({ phase: 'elevation' });
+  const ranges = await heightsLoops(sampled, signal);
   calls++;
   top.forEach((c, k) => {
     const { gain, profile } = elevation(ranges[k]);
