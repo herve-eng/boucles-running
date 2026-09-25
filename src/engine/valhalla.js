@@ -4,7 +4,7 @@
 // sont retardées) et accepte au plus 10 points d'arrêt par itinéraire.
 // Le levier pour aller vite est donc de faire PEU de requêtes : on regroupe
 // plusieurs boucles dans chaque appel.
-import { fetchJson } from './http.js';
+import { fetchJson } from './net.js';
 import { decodePolyline } from './geo.js';
 
 const BASE = 'https://valhalla1.openstreetmap.de';

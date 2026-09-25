@@ -5,10 +5,12 @@
 import { writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { fetchJson, stats } from './lib/http.js';
-import { makeProjection } from './lib/geo.js';
+import './lib/node-setup.js';
+import { fetchJson, stats } from '../src/engine/net.js';
+import { makeProjection } from '../src/engine/geo.js';
 import { loadContext } from './lib/overpass.js';
-import { generateLoops } from './lib/loop.js';
+import { loadTileContext, contextRadius } from '../src/engine/context-tiles.js';
+import { generateLoops } from '../src/engine/loop.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -39,9 +41,12 @@ for (const s of STARTS.filter((s) => !startFilter || s.id.includes(startFilter))
   // Contexte assez large pour la plus grande boucle : le tracé reste dans un
   // disque de rayon ≈ diamètre du cercle (21 km -> ~5 km).
   const maxD = Math.max(...(distFilter.length ? distFilter : DISTANCES));
-  const ctx = await loadContext(g.coord, (maxD * 1000) / Math.PI / 1.1 + 800, proj);
+  // Par défaut, comme l'app : tuiles vectorielles. POC_OVERPASS=1 : ancienne source.
+  const ctx = process.env.POC_OVERPASS
+    ? await loadContext(g.coord, contextRadius(maxD), proj)
+    : await loadTileContext(g.coord, contextRadius(maxD), proj);
   console.log(`\n▶ ${s.query} -> ${g.label} ${g.coord.map((v) => v.toFixed(5))}`);
-  console.log(`  OSM : ${ctx.greens.length} espaces verts, ${ctx.waterAreas.length} plans d'eau, ${ctx.routes.length} parcours balisés (${ctx.overpassMs} ms)`);
+  console.log(`  Contexte (${ctx.source.kind}) : ${ctx.greens.length} espaces verts, ${ctx.waterAreas.length} plans d'eau, ${ctx.routes.length} parcours balisés (${ctx.source.ms} ms)`);
   results.starts.push({ ...s, ...g, osm: { greens: ctx.greens.length, waterAreas: ctx.waterAreas.length, routes: ctx.routes.slice(0, 8) } });
 
   for (const d of DISTANCES.filter((d) => !distFilter.length || distFilter.includes(d))) {

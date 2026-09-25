@@ -8,5 +8,9 @@
     "poc": "node poc/run.js",
     "report": "node poc/report.js",
     "mockup-data": "node mockup/build-data.js"
+  },
+  "dependencies": {
+    "@mapbox/vector-tile": "^3.0.0",
+    "pbf": "^5.1.2"
   }
 }

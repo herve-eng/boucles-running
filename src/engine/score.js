@@ -1,6 +1,6 @@
 // Notation d'une boucle candidate.
 import { Grid, dist, resample } from './geo.js';
-import { greenAt, waterNear, routeNear } from './overpass.js';
+import { greenAt, waterNear, routeNear } from './context.js';
 
 const STEP = 20; // pas d'échantillonnage (m)
 const OVERLAP_NEAR = 20; // deux passages à moins de 20 m = recouvrement
