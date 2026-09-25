@@ -1,2 +1,4 @@
 node_modules/
 poc/cache/
+poc/results/results-partiel.json
+dist/
