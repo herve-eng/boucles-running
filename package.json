@@ -1,0 +1,12 @@
+{
+  "name": "boucles-running",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Générateur de boucles de course à pied (preuve de concept)",
+  "scripts": {
+    "poc": "node poc/run.js",
+    "report": "node poc/report.js",
+    "mockup-data": "node mockup/build-data.js"
+  }
+}
